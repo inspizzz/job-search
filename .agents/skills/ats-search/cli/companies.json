@@ -1,0 +1,24 @@
+{
+  "_comment": [
+    "Registry of company -> ATS provider. Only slugs verified to return HTTP 200 with a",
+    "real job list are listed here. To add one, run:  bun run src/cli.ts resolve <slug>",
+    "and append the provider it reports. The slug is normally visible in the careers-page",
+    "URL (e.g. job-boards.greenhouse.io/<slug>, jobs.lever.co/<slug>, jobs.ashbyhq.com/<slug>).",
+    "Known-unresolved (careers pages use a custom or unidentified board): quantinuum,",
+    "oxford quantum circuits, phasecraft, cortical labs, darktrace, arm, nvidia."
+  ],
+  "companies": [
+    { "name": "Riverlane",        "slug": "riverlane",       "provider": "greenhouse", "tags": ["quantum"] },
+    { "name": "PsiQuantum",       "slug": "psiquantum",      "provider": "greenhouse", "tags": ["quantum"] },
+    { "name": "DeepMind",         "slug": "deepmind",        "provider": "greenhouse", "tags": ["ai"] },
+    { "name": "Isomorphic Labs",  "slug": "isomorphiclabs",  "provider": "greenhouse", "tags": ["ai", "bio"] },
+    { "name": "Graphcore",        "slug": "graphcore",       "provider": "greenhouse", "tags": ["ai", "hardware"] },
+    { "name": "Wayve",            "slug": "wayve",           "provider": "greenhouse", "tags": ["ai"] },
+    { "name": "Monzo",            "slug": "monzo",           "provider": "greenhouse", "tags": ["fintech"] },
+    { "name": "Stripe",           "slug": "stripe",          "provider": "greenhouse", "tags": ["fintech"] },
+    { "name": "Cloudflare",       "slug": "cloudflare",      "provider": "greenhouse", "tags": ["infra"] },
+    { "name": "Synthesia",        "slug": "synthesia",       "provider": "ashby",      "tags": ["ai"] },
+    { "name": "Improbable",       "slug": "improbable",      "provider": "ashby",      "tags": ["ai", "simulation"] },
+    { "name": "Palantir",         "slug": "palantir",        "provider": "lever",      "tags": ["data"] }
+  ]
+}
