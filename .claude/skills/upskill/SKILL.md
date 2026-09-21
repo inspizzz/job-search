@@ -40,7 +40,7 @@ In targeted mode, derive a slug from the job title and company for the report fi
 ## Step 2: Load Data
 
 ### Aggregate mode
-1. Read `<profile>/job_search_tracker.csv`. Extract all rows. The columns are:
+1. Read `<profile>/job_search_tracker.csv` when present. Also read ranked entries with recorded `gaps` from `<profile>/job_scraper/seen_jobs.json` when present. Deduplicate by URL/company+role, keeping the tracker version when both represent one job. If neither has usable data, ask for a target posting or suggest searching/ranking first. Extract all tracker rows. The columns are:
    `date, company, sector, role, role_type, channel, status, contact_person, fit_rating, notes, cv_file, cover_letter_file, source`
 2. For each row, note the `role`, `company`, and `fit_rating`. The `fit_rating` column is a 0–100 score where 100 = perfect fit. You will use it to weight gaps — a lower fit rating means the role exposed more gaps.
 3. Read `<profile>/profile/01-candidate-profile.md` to get the candidate's current skills and experience.
@@ -60,6 +60,8 @@ Extract required and preferred technical skills from each job source:
 For each job row in the tracker, you do not have the full posting — use the `role`, `sector`, and `notes` columns to infer likely required skills. If the row has a `source` URL, you may optionally WebFetch it for more detail, but skip if the URL is missing or dead.
 
 Build a **skill frequency map**: for each extracted skill, count how many jobs mention it. Then apply a **fit weight**: for each job, multiply the skill count contribution by `(100 - fit_rating) / 100` — lower fit jobs contribute more to the gap score.
+
+For ranked-but-untracked jobs, use recorded `gaps` as posting-backed evidence and `rank_score` as the fit rating. Prefer archived postings for tracked applications over inferred requirements. Label inference separately. If a fit score is missing or invalid, use an explicit unweighted contribution of 1 and disclose it; never treat an empty score as zero fit.
 
 Final score for each skill: `sum of (fit_weight × occurrence)` across all jobs.
 

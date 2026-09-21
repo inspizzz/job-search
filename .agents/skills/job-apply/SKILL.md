@@ -18,4 +18,9 @@ Read `<profile>/profile/03-cv-statements.md` and optional `profile/writing-prefe
 
 Follow the source's reviewer brief using a Codex subagent when available and permitted, keeping the reviewer read-only. If independent review is unavailable, perform and label a separate self-review. Independently verify company claims before incorporating feedback.
 
-Compilation and visual inspection of every PDF page are required, using the Codex PDF adaptations in `AGENTS.md`. Run the final checklist once on the final files. Report both `.tex` and `.pdf` paths and any incomplete checks; do not repeat the source's obsolete suggestion to compile after delivery.
+Compilation and visual inspection of every PDF page are required, using the Codex PDF adaptations in `AGENTS.md`. Run the final checklist once on the final files. Report both `.tex` and `.pdf` paths and any incomplete checks.
+
+Run the source's automated PDF checks as well as inspecting every rendered page.
+Record verified files as a draft with the profile-scoped tracker tool; submission
+requires the candidate's confirmation. Translate follow-ups to `$job-outcome`,
+`$job-interview`, and `$job-form-answers`.

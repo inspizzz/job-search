@@ -47,6 +47,11 @@ do not maintain a second copy of the full procedures.
 | `/add-portal` | `$job-add-portal` |
 | `/scrape` | `$job-scraper` |
 | `/upskill` | `$job-upskill` |
+| `/rank` | `$job-rank` |
+| `/outcome` | `$job-outcome` |
+| `/interview` | `$job-interview` |
+| `/form-answers` | `$job-form-answers` |
+| `/html-report` | `$job-html-report` |
 | Individual fit, CV, cover-letter, interview or career requests | `$job-application-assistant` |
 
 The seven existing `*-search` skills provide portal CLIs. Use `job-scraper` for

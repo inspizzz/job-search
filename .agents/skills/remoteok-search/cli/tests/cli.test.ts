@@ -41,7 +41,7 @@ describe("remoteok-search CLI", () => {
     });
   });
 
-  describe("live search (network)", () => {
+  describe.skipIf(process.env.JOB_SEARCH_LIVE_TESTS !== "1")("live search (network)", () => {
     test("returns results with populated id/title/url", async () => {
       const r = await runCLI(["search", "--limit", "5", "--format", "json"]);
       const data = parseJSON<SearchResult>(r);

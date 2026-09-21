@@ -18,7 +18,7 @@ interface SearchResponse {
   }[]
 }
 
-describe("search", () => {
+describe.skipIf(process.env.JOB_SEARCH_LIVE_TESTS !== "1")("search", () => {
   test("returns parseable cards with the core fields populated", async () => {
     const res = await runCLI(["search", "-q", "quantum", "-n", "10"])
     const data = parseJSON<SearchResponse>(res)
@@ -61,7 +61,7 @@ describe("search", () => {
 })
 
 describe("detail", () => {
-  test("resolves a posting from a search result and returns structured fields", async () => {
+  test.skipIf(process.env.JOB_SEARCH_LIVE_TESTS !== "1")("resolves a posting from a search result and returns structured fields", async () => {
     const list = parseJSON<SearchResponse>(await runCLI(["search", "-q", "quantum", "-n", "1"]))
     const res = await runCLI(["detail", list.results[0]!.url])
     const data = parseJSON<{
@@ -79,7 +79,7 @@ describe("detail", () => {
     expect(data.description).not.toContain("&lt;")
   })
 
-  test("accepts a bare reference code", async () => {
+  test.skipIf(process.env.JOB_SEARCH_LIVE_TESTS !== "1")("accepts a bare reference code", async () => {
     const list = parseJSON<SearchResponse>(await runCLI(["search", "-q", "research", "-n", "1"]))
     const ref = list.results[0]!.url.match(/\/job\/([A-Z0-9]+)\//i)![1]!
     const data = parseJSON<{ title: string }>(await runCLI(["detail", ref]))

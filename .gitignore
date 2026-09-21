@@ -57,6 +57,7 @@ profiles/*/cv/main_*.tex
 profiles/*/cv/*.txt
 profiles/*/cover_letters/cover_*.tex
 profiles/*/cover_letters/Cover_*.tex
+!profiles/example/cover_letters/cover_example.tex
 
 # documents/ subfolder contents are personal — only README and folder structure are tracked
 profiles/*/documents/cv/**
@@ -97,3 +98,12 @@ profiles/*/upskill/*.md
 .claude/skills/job-application-assistant/04-job-evaluation.md
 .claude/skills/job-application-assistant/07-interview-prep.md
 .claude/skills/job-scraper/search-queries.md
+
+# Defence against legacy workflows writing outside their selected profile.
+/reports/
+/company_research/
+/gmail_sync/
+**/job_scraper/seen_jobs.json
+**/job_scraper/notion_sync.json
+**/job_scraper/*.md
+**/upskill/report-*.md

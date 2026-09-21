@@ -99,7 +99,7 @@ The following shared files are NOT touched (framework rules, used by every profi
 
 ### If scope includes `documents`:
 
-Use Glob to list all files present in `<profile>/documents/cv/`, `<profile>/documents/linkedin/`, `<profile>/documents/diplomas/`, `<profile>/documents/references/`, and `<profile>/documents/applications/`. Present as:
+Use Glob to list all files present in `<profile>/documents/cv/`, `<profile>/documents/linkedin/`, `<profile>/documents/diplomas/`, `<profile>/documents/references/`, `<profile>/documents/projects/`, and `<profile>/documents/applications/`. Present as:
 
 ```
 ## Documents reset will delete:
@@ -114,6 +114,9 @@ Use Glob to list all files present in `<profile>/documents/cv/`, `<profile>/docu
   - [filename] or "(empty)"
 
 <profile>/documents/references/
+  - [filename] or "(empty)"
+
+<profile>/documents/projects/
   - [filename] or "(empty)"
 
 <profile>/documents/applications/
@@ -255,6 +258,7 @@ rm -f <profile>/documents/cv/*
 rm -f <profile>/documents/linkedin/*
 rm -f <profile>/documents/diplomas/*
 rm -f <profile>/documents/references/*
+rm -f "<profile>/documents/projects/"*
 rm -rf <profile>/documents/applications/*/
 ```
 
@@ -284,3 +288,11 @@ Then tell the user what to do next based on what was reset:
 
 **If both were reset:**
 > Both your profile files and documents folder are now empty. Add documents to `<profile>/documents/` (or skip and use the CV import / interview path), then run `/setup`.
+
+
+Application archives now also contain submitted snapshots, form answers, follow-up
+drafts and interview packs. Include them by name in the documents-reset preview.
+The existing `profile`/`documents`/`all` scopes do not implicitly delete the tracker,
+ranked state or reports outside `documents/`. Report any retained state and, when
+the user separately requests its deletion, preview the exact selected-profile
+paths first. Never broaden a profile reset to other people or shared tooling.

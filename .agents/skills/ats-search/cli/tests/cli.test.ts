@@ -10,7 +10,7 @@ interface SearchResponse {
   results: { id: string; title: string; url: string; provider: string; company: string }[]
 }
 
-describe("search", () => {
+describe.skipIf(process.env.JOB_SEARCH_LIVE_TESTS !== "1")("search", () => {
   test("greenhouse board returns usable cards", async () => {
     const res = await runCLI(["search", "-c", "riverlane", "-n", "5"])
     const data = parseJSON<SearchResponse>(res)
@@ -62,7 +62,7 @@ describe("search", () => {
   })
 })
 
-describe("salary", () => {
+describe.skipIf(process.env.JOB_SEARCH_LIVE_TESTS !== "1")("salary", () => {
   test("ashby compensation is surfaced when the employer published it", async () => {
     // Ashby is the only provider exposing pay structurally, and only where the employer
     // opted in — typically US roles under pay-transparency law. Assert the plumbing works
@@ -88,7 +88,7 @@ describe("salary", () => {
   })
 })
 
-describe("resolve", () => {
+describe.skipIf(process.env.JOB_SEARCH_LIVE_TESTS !== "1")("resolve", () => {
   test("identifies the ATS behind a known slug", async () => {
     const res = await runCLI(["resolve", "riverlane"])
     const data = parseJSON<{ resolved: string; registryEntry: { provider: string } }>(res)
@@ -104,7 +104,7 @@ describe("resolve", () => {
 })
 
 describe("detail", () => {
-  test("fetches a posting from its board URL", async () => {
+  test.skipIf(process.env.JOB_SEARCH_LIVE_TESTS !== "1")("fetches a posting from its board URL", async () => {
     const list = parseJSON<SearchResponse>(await runCLI(["search", "-c", "riverlane", "-n", "1"]))
     const url = list.results[0]!.url
     const res = await runCLI(["detail", url])

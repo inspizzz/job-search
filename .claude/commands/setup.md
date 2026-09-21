@@ -106,7 +106,7 @@ Hold this content in context throughout Path A. Do not re-read.
 
 ### Step A3: Parse Documents
 
-Read each document found in Step A1. Process subfolders in this order: `cv/`, `linkedin/`, `diplomas/`, `references/`, `applications/`.
+Read each document found in Step A1. Process subfolders in this order: `cv/`, `linkedin/`, `diplomas/`, `references/`, `projects/`, `applications/`.
 
 **`cv/` documents:** name, contact (email, phone, LinkedIn, GitHub), education (degree, institution, dates, thesis), work experience (title, company, dates, location, bullets), skills, publications, awards, profile/summary.
 
@@ -116,7 +116,16 @@ Read each document found in Step A1. Process subfolders in this order: `cv/`, `l
 
 **`references/` documents:** referee name, title, organization; full text of the letter (extract specific quotes); competency language used.
 
-**`applications/<company>_<role>/` subfolders:**
+**`projects/` documents:** extract only the candidate's evidenced contribution, dates,
+technologies and outcomes. Keep source references; ask about unclear ownership or dates.
+
+**`applications/` subfolders:** use the tracker's `archive` field when present; legacy
+`<company>_<role>/` folders remain readable. New archives use safe stems and unique
+attempt suffixes so repeated applications remain separate. `submitted_cv.*`,
+`submitted_letter.*`, `job_posting.md` and dated `outcome.md` entries describe what
+was actually sent and what happened. A draft is not an interview-outcome signal.
+
+**Legacy application materials:**
 - `job_posting.md`: role title, company, required skills, experience level, sector, role type
 - `cover_letter.tex`: opening structure, body structure, bullet style, closing, recurring phrases
 - `cv_draft.tex`: profile statement, section ordering, framing for this role type

@@ -47,7 +47,7 @@ describe("indeed-search CLI", () => {
     });
   });
 
-  describe("live search (network, best-effort)", () => {
+  describe.skipIf(process.env.JOB_SEARCH_LIVE_TESTS !== "1")("live search (network, best-effort)", () => {
     // Indeed is behind Cloudflare. A clean run returns parseable results; a blocked
     // run must fail gracefully with CLOUDFLARE_CHALLENGE. Both are acceptable — what
     // is NOT acceptable is a crash or garbage output.

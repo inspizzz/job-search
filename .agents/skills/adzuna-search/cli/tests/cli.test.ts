@@ -6,7 +6,7 @@ import { runCLI, parseJSON } from "./helpers"
 // MISSING_CREDENTIALS, which the last block asserts is handled cleanly.
 
 const HAS_CREDS = Boolean(process.env.ADZUNA_APP_ID && process.env.ADZUNA_APP_KEY)
-const liveTest = HAS_CREDS ? test : test.skip
+const liveTest = HAS_CREDS && process.env.JOB_SEARCH_LIVE_TESTS === "1" ? test : test.skip
 
 interface SearchResponse {
   meta: { count: number; page: number; total: number | null }

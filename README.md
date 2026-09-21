@@ -321,3 +321,21 @@ To get the most from this, invest time during `/setup` in describing not just yo
 ## License
 
 MIT
+
+## Ranking, application tracking and local reports
+
+After `/scrape`, use `/rank` (`$job-rank` in Codex) for a scored shortlist.
+`/apply` records verified documents as drafts; `/outcome` records a submission,
+interview, offer or decision once you confirm it, and can draft follow-ups.
+`/interview` prepares against the exact submitted materials, `/form-answers`
+handles word-limited portal questions, and `/html-report` creates an offline
+application dashboard. All of these use the selected person's ignored profile.
+
+See [Codex commands](docs/CODEX.md), [application state](docs/APPLICATION-STATE.md)
+and the [upstream integration plan](docs/UPSTREAM-INTEGRATION-PLAN.md).
+
+Repository checks run automatically in GitHub Actions. Locally, run
+`python3 tools/privacy_check.py`, `python3 tools/check_skills.py` and
+`python3 -m unittest discover -s tests -t . -q`. In each portal's `cli/` directory,
+run `bun run typecheck` and `bun test`. Live tests are opt-in with
+`JOB_SEARCH_LIVE_TESTS=1`; Adzuna also requires your local credentials.

@@ -8,7 +8,7 @@ codex
 ```
 
 The root `AGENTS.md` loads the existing `CLAUDE.md` rules and translates the
-Claude-specific tool names. Ten workflow skills in `.agents/skills/` reuse the
+Claude-specific tool names. Fifteen workflow skills in `.agents/skills/` reuse the
 procedures in `.claude/`; the seven existing portal CLI skills work in both
 assistants. Keep those directories together when copying the workspace.
 
@@ -34,6 +34,11 @@ name supplies the workflow arguments. Natural-language requests also work.
 | `/apply <URL or text>` | `$job-apply <URL or text>` | Evaluate and prepare an application |
 | `/expand` | `$job-expand` | Propose source-backed profile additions |
 | `/upskill` | `$job-upskill` | Learning plan from tracked jobs |
+| `/rank` | `$job-rank` | Rank scraped jobs into a shortlist |
+| `/outcome` | `$job-outcome` | Track application progress and draft follow-ups |
+| `/interview` | `$job-interview` | Prepare for a specific interview |
+| `/form-answers` | `$job-form-answers` | Draft bounded application-form answers |
+| `/html-report` | `$job-html-report` | Build a private offline tracker dashboard |
 | `/upskill <URL>` | `$job-upskill <URL>` | Learning plan for one posting |
 | `/add-template` | `$job-add-template` | Register a custom LaTeX template |
 | `/add-portal` | `$job-add-portal` | Develop a portal search CLI |
@@ -90,7 +95,7 @@ available web search when appropriate.
 
 - **Instructions:** `AGENTS.md` supplies Codex adaptations; `CLAUDE.md` remains
   the shared source for profile routing and the verification checklist.
-- **Commands and skills:** thin Codex adapters link to all seven Claude commands
+- **Commands and skills:** thin Codex adapters link to all twelve Claude commands
   and all three Claude workflow skills. Changes to those source procedures carry
   through without copying their full text.
 - **Review:** `$job-apply` uses a Codex reviewer subagent when the runtime supports
@@ -125,3 +130,20 @@ After changing an adapter, check that Codex discovers it, its workflow and share
 reference links resolve, and a simple read-only invocation routes correctly.
 Live job searches and application generation additionally require network access,
 the active person's information, and successful document verification.
+
+## State tools and verification
+
+See [application state](APPLICATION-STATE.md) for local tracking, ranking and
+archives. All stateful CLIs require `--profile`; there is no default person.
+Reports stay inside the profile, and external messaging/sync is not enabled.
+
+PDF checks use `tools/verify_pdf.py` (optional pypdf, with Poppler fallback) and
+`tools/verify_layout.py` (Poppler bounding boxes). Inspect every rendered page
+in addition to these checks. The blank scaffold can be smoke-tested with
+`python3 tools/smoke_templates.py`; it never reads a candidate profile.
+
+Run `python3 tools/privacy_check.py`, `python3 tools/check_skills.py`, and
+`python3 -m unittest discover -s tests -t . -q` for workspace changes. Portal
+CLIs run `bun run typecheck` and `bun test` from their `cli/` directory. Live
+service tests require `JOB_SEARCH_LIVE_TESTS=1`; CI runs the offline suites.
+The [integration plan](UPSTREAM-INTEGRATION-PLAN.md) records upstream provenance.

@@ -96,3 +96,12 @@ All errors are written to **stderr** as `{ "error": "...", "code": "..." }` and 
 - Page size is fixed at 10 results per page.
 - LinkedIn may rate-limit; the CLI retries 429/5xx with exponential backoff. Keep volume low (see ToS note above).
 - Job IDs are numeric (e.g. `4426311357`) — pass them as-is to `detail`.
+
+## Updated CLI behaviour
+
+`--jobage-minutes N` supports searches within the last N minutes; use it instead
+of `--jobage`, not together. Numeric CLI flags require whole positive numbers.
+Unknown flags are errors. Detail results expose `isActive`: false means a closed
+banner was found; true means no such banner was found, not independently verified
+availability. Descriptions preserve nested blocks. The former `applyUrl` field
+was removed because it did not reliably identify an application destination.

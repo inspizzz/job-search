@@ -247,3 +247,15 @@ Shared Claude Code permissions now live in `.claude/settings.json` (scoped to `b
 ```bash
 rm .claude/settings.local.json
 ```
+
+## Updated local workflows
+
+New ranking, outcome, interview, form-answer and dashboard workflows have matching
+Codex skills in [docs/CODEX.md](docs/CODEX.md). They need Python 3.10 or newer and
+an explicitly selected local profile. Existing profiles require no automatic
+migration: legacy trackers remain readable and personal documents stay untouched.
+
+Optional `pypdf` improves PDF text extraction; Poppler remains necessary for
+layout geometry and page rendering. Run `python3 tools/smoke_templates.py` to test
+the blank stock templates in a temporary directory. Application PDFs still need
+visual inspection, even when automated checks pass.

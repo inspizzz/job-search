@@ -64,3 +64,8 @@ templates. See `docs/CODEX.md` for Codex entry points.
 
 Indeed and Adzuna are configured for the UK. LinkedIn and the remote boards serve
 other markets. Use `/add-portal` or `$job-add-portal` for another local job board.
+
+Application tools require an explicit profile slug and an ignored manifest.
+Each local profile may also hold `reports/`, `application-forms/`, ranking state
+and uniquely named application archives. See [application state](../docs/APPLICATION-STATE.md).
+The blank scaffold includes a compileable example letter and `documents/projects/`.

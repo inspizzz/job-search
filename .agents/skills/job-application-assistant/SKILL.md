@@ -17,3 +17,7 @@ Establish the active profile before using candidate information. Follow the sour
 Relative references `03-writing-style.md`, `05-cv-templates.md`, and `06-cover-letter-templates.md` in the source mean files in `.claude/skills/job-application-assistant/`, not this adapter directory. The source's bare `cv/` means `<profile>/cv/`.
 
 Read personal statement variants from `<profile>/profile/03-cv-statements.md` and optional personal style notes from `profile/writing-preferences.md`. Apply `CLAUDE.md`'s verification checklist and `AGENTS.md`'s compilation/visual inspection requirements even when creating only one document.
+
+For an existing application's interview use `$job-interview`; form questions use
+`$job-form-answers`. Apply the shared `09-web-research.md` and `10-eligibility.md`
+references when evaluating a posting, alongside the active profile's framework.

@@ -173,3 +173,9 @@ The command is designed to be re-run as your document collection grows. Each run
 - After adding reference letters
 - After recording outcomes for completed applications
 - After updating your master CV
+
+
+`projects/` holds source evidence for independent projects. New application archives
+may have unique suffixes; the local tracker's `archive` field is authoritative.
+They contain the exact posting, submitted snapshots, outcomes, form answers and
+interview prep. All populated documents belong in a real ignored local profile.

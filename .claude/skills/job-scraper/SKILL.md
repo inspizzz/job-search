@@ -77,12 +77,14 @@ For each search:
 ### Step 2: Fetch & Parse
 
 For each promising result from Step 1:
-- Use `WebFetch` to retrieve the job posting page
+- Use the matching portal CLI's `detail` command first when supported, then native web tools. Follow `.claude/skills/job-application-assistant/09-web-research.md`. A failed fetch is not an expired job. LinkedIn `isActive: false` means a closed banner was found; `true` alone does not prove the job is open.
 - Extract: **job title**, **company**, **location**, **posting date** (or "recent"), **URL**, **key requirements** (brief), **application deadline** (if listed)
 - Skip if the URL or company+title combo already exists in `seen_jobs.json`
 - Skip if the company+role already appears in `<profile>/job_search_tracker.csv`
 
 ### Step 3: Quick Fit Assessment
+
+Read `.claude/skills/job-application-assistant/10-eligibility.md`. Surface explicit language, work-rights and location requirements; do not invent candidate eligibility.
 
 For each new job, do a rapid fit check (NOT the full evaluation from `<profile>/profile/04-job-evaluation.md` - just a quick signal):
 
@@ -92,21 +94,29 @@ For each new job, do a rapid fit check (NOT the full evaluation from `<profile>/
 
 ### Step 4: Deduplicate & Store
 
-1. Add ALL fetched jobs (new and skipped) to `seen_jobs.json` with structure:
+1. Derive new keys using `python3 tools/job_key.py --company "..." --title "..." --url "..."`.
+   Also check URL and company+title across existing entries before inserting, since
+   older keys may differ. Preserve existing records and their ranks; never overwrite
+   the whole backlog from memory. Add genuinely retrieved jobs with this structure:
 ```json
 {
   "seen": {
-    "<url_or_company_title_key>": {
+    "<canonical_company_title_key>": {
       "title": "...",
       "company": "...",
       "url": "...",
       "first_seen": "YYYY-MM-DD",
+      "posted_date": "YYYY-MM-DD or null",
+      "deadline": "YYYY-MM-DD or null",
+      "portal": "linkedin-search",
+      "source_method": "cli or web",
       "fit": "high/medium/low",
-      "status": "new/skipped/evaluated"
+      "status": "new"
     }
   }
 }
 ```
+Use JSON null, not the string "null", for unknown dates. Status becomes `ranked` or `expired` only through documented ranking/expiry checks.
 2. Only present jobs NOT already in the seen list or tracker.
 
 ### Step 5: Present Results
@@ -130,13 +140,13 @@ For each high-match job, add 2-3 bullet points:
 ```
 
 After presenting, ask:
-> "Want me to evaluate any of these in detail? Just give me the number(s)."
+> "Choose a job for a full evaluation, or use /rank for a scored shortlist."
 
 If the user picks a number, invoke the **job-application-assistant** skill workflow (fit evaluation first, then CV + cover letter if approved).
 
 ### Step 6: Update Tracker (Optional)
 
-If the user decides to apply to any job, add a row to `<profile>/job_search_tracker.csv`.
+The `/apply` workflow records verified application files with status `drafted` using `tools/application_state.py`. Finding or selecting a posting is not submission; use `/outcome` only for outcomes the candidate confirms.
 
 ---
 

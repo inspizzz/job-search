@@ -12,9 +12,7 @@ export function writeError(error: string, code: string): void {
   process.stderr.write(JSON.stringify({ error, code }) + "\n")
 }
 
-const UA =
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
-  "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+const UA = "Mozilla/5.0 (compatible; linkedin-search-cli/1.0)"
 
 /** Fetch HTML with exponential backoff on 429/5xx. Returns "" on a 404. */
 export async function htmlFetch(url: string): Promise<string> {
@@ -29,6 +27,7 @@ export async function htmlFetch(url: string): Promise<string> {
         "X-Requested-With": "XMLHttpRequest",
       },
       redirect: "follow",
+      signal: AbortSignal.timeout(15000),
     })
     if (response.status === 429 || response.status >= 500) {
       if (attempt === maxRetries) {
@@ -64,7 +63,47 @@ export interface JobDetail extends JobCard {
   employmentType: string | null
   jobFunction: string | null
   industries: string | null
-  applyUrl: string | null
+  isActive: boolean
+}
+
+/**
+ * Extract the inner HTML of a <div> identified by a CSS class name, correctly
+ * handling nested <div> elements by tracking tag depth.
+ */
+export function extractDivContent(html: string, className: string): string | null {
+  const escaped = className.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const openRe = new RegExp(`<div[^>]*class="[^"]*${escaped}[^"]*"[^>]*>`, 'i')
+  const open = openRe.exec(html)
+  if (!open) return null
+
+  let i = open.index + open[0].length
+  let depth = 1
+
+  while (depth > 0 && i < html.length) {
+    const nextOpen = html.indexOf('<div', i)
+    const nextClose = html.indexOf('</div>', i)
+
+    if (nextClose === -1) return null
+
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      depth++
+      i = nextOpen + 4
+    } else {
+      depth--
+      i = nextClose + 6
+    }
+  }
+
+  return html.slice(open.index + open[0].length, i - 6)
+}
+
+/**
+ * Convert a Unicode code point to a string. Uses `fromCodePoint` (not
+ * `fromCharCode`) so supplementary-plane code points (e.g. emoji, U+1F600)
+ * decode correctly, and drops out-of-range values instead of throwing.
+ */
+function numericEntity(cp: number): string {
+  return cp >= 0 && cp <= 0x10ffff ? String.fromCodePoint(cp) : ""
 }
 
 function decodeHtmlEntities(text: string): string {
@@ -75,7 +114,9 @@ function decodeHtmlEntities(text: string): string {
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/&apos;/g, "'")
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
+    // Numeric character references: decimal (&#233;) and hexadecimal (&#xE9;).
+    .replace(/&#(\d+);/g, (_, dec) => numericEntity(parseInt(dec, 10)))
+    .replace(/&#[xX]([0-9a-fA-F]+);/g, (_, hex) => numericEntity(parseInt(hex, 16)))
     .replace(/&nbsp;/g, " ")
 }
 
@@ -168,11 +209,11 @@ export function parseJobDetail(html: string, id: string): JobDetail {
 
   // Rich description block. Keep paragraph/line breaks as newlines.
   let description: string | null = null
-  const desc = html.match(
-    /class="(?:show-more-less-html__markup|description__text[^"]*)"[^>]*>([\s\S]*?)<\/div>/i,
-  )
-  if (desc) {
-    const withBreaks = desc[1]
+  const descHtml =
+    extractDivContent(html, "show-more-less-html__markup") ??
+    extractDivContent(html, "description__text")
+  if (descHtml) {
+    const withBreaks = descHtml
       .replace(/<\s*br\s*\/?>/gi, "\n")
       .replace(/<\/(p|li|ul|ol|div|h\d)>/gi, "\n")
     description = decodeHtmlEntities(stripTags(withBreaks)).replace(/\n{3,}/g, "\n\n").trim() || null
@@ -187,8 +228,20 @@ export function parseJobDetail(html: string, id: string): JobDetail {
     criteria[clean(cm[1]).toLowerCase()] = clean(cm[2])
   }
 
-  const applyMatch = html.match(/class="topcard__link[^"]*"[^>]*href="([^"]+)"/i)
-  const applyUrl = applyMatch ? decodeHtmlEntities(applyMatch[1]).split("?")[0] : null
+  // Closed-state detection, scoped to the top card. A closed posting renders
+  //   <figure class="closed-job closed-job__flavor topcard__flavor-row">
+  //     <figcaption ...>No longer accepting applications</figcaption>
+  //   </figure>
+  // there; that class and its visible text are the only markers real closed
+  // pages carry (verified against live guest pages, 2026-08-09). The search
+  // stops where the description markup begins: recruiter boilerplate quotes
+  // these phrases, and a false CLOSED talks a user out of a live job.
+  // Absence of the banner is absence of evidence, not proof the posting is
+  // open - markup drift or a consent-walled response also renders no banner -
+  // so isActive: true means only "no closed banner found".
+  const descStart = html.search(/class="(?:show-more-less-html__markup|description__text)/i)
+  const topcard = descStart === -1 ? html : html.slice(0, descStart)
+  const isActive = !/closed-job__flavor|no longer accepting applications/i.test(topcard)
 
   return {
     id,
@@ -203,7 +256,7 @@ export function parseJobDetail(html: string, id: string): JobDetail {
     employmentType: criteria["employment type"] ?? null,
     jobFunction: criteria["job function"] ?? null,
     industries: criteria["industries"] ?? null,
-    applyUrl,
+    isActive,
   }
 }
 
@@ -211,6 +264,12 @@ export function parseJobDetail(html: string, id: string): JobDetail {
 export function jobageToTPR(days: number): string | null {
   if (!days || days <= 0 || days >= 9999) return null
   return `r${days * 86400}`
+}
+
+/** Convert a job-age in minutes to LinkedIn's f_TPR seconds value (sub-day precision). */
+export function minutesToTPR(minutes: number): string | null {
+  if (!minutes || minutes <= 0) return null
+  return `r${minutes * 60}`
 }
 
 /** Workplace-type flag: on-site=1, remote=2, hybrid=3. */
